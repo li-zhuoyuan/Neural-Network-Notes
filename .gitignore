@@ -1,0 +1,10 @@
+# Ignore draft-related files
+draft*
+
+# Ignore testing-related files
+testing*
+
+# Ignore data, img, videos folders
+data/
+img/
+videos/
