@@ -8,3 +8,6 @@ testing*
 data/
 img/
 videos/
+
+# Ignore environment files
+environment-local.yml
