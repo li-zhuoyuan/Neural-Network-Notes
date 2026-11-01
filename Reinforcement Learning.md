@@ -19,12 +19,16 @@ Actor 学习策略，Critic 学习价值。当前实现先采集完整回合，�
 $$
 y_t=r_t+\gamma(1-d_t)V(s_{t+1}),\qquad \delta_t=y_t-V(s_t).
 $$
+
 $$
-L_V=\operatorname{MSE}(V(s_t),\operatorname{stopgrad}(y_t)),\qquad
-L_\pi=-\mathbb E[\log\pi(a_t\mid s_t)\operatorname{stopgrad}(\delta_t)].
+L_V = \mathrm{MSE}(V(s_t),\mathrm{sg}(y_t)).
 $$
 
-TD 误差为正时提高所选动作的概率，反之降低。`detach()` 避免 Actor 更新流入 Critic，以及目标值参与 Critic 的梯度计算。入口为 `train_actor_critic()`，默认 800 回合。
+$$
+L_{\pi} = -\mathrm{E}[\log\pi(a_t\mid s_t)\,\mathrm{sg}(\delta_t)].
+$$
+
+其中 `E` 表示期望，`sg` 表示停止梯度，对应代码中的 `detach()`。TD 误差为正时提高所选动作的概率，反之降低。`detach()` 避免 Actor 更新流入 Critic，以及目标值参与 Critic 的梯度计算。入口为 `train_actor_critic()`，默认 800 回合。
 
 ## 3. PPO：裁剪策略更新
 
@@ -33,11 +37,16 @@ PPO 保存采样时的旧动作对数概率，通过新旧策略概率比限制�
 $$
 \rho_t=\exp(\log\pi_\theta(a_t\mid s_t)-\log\pi_{old}(a_t\mid s_t)),
 $$
+
 $$
-L_\pi=-\mathbb E[\min(\rho_t A_t,\operatorname{clip}(\rho_t,1-\epsilon,1+\epsilon)A_t)].
+c_t = \mathrm{clip}(\rho_t,1-\epsilon,1+\epsilon).
 $$
 
-当前代码先根据 TD 误差逆序计算 GAE：`A_t = delta_t + gamma * lambda * A_(t+1)`，再标准化优势。采集一个回合后，对同一批数据执行多轮 Actor 与 Critic 更新。奖励、动作概率和优势均保持一维，避免广播造成形状错误。
+$$
+L_{\pi} = -\mathrm{E}[\min(\rho_t A_t,c_t A_t)].
+$$
+
+其中 `c_t` 是将概率比裁剪到 `[1-eps, 1+eps]` 后的值。当前代码先根据 TD 误差逆序计算 GAE：`A_t = delta_t + gamma * lambda * A_(t+1)`，再标准化优势。采集一个回合后，对同一批数据执行多轮 Actor 与 Critic 更新。奖励、动作概率和优势均保持一维，避免广播造成形状错误。
 
 入口为 `train_PPO()`，默认 400 回合。它仍是 on-policy 方法，不能直接像 SAC 一样反复使用任意历史回放数据。
 
@@ -50,11 +59,13 @@ $$
 $$
 V_{target}(s')=\sum_a\pi(a\mid s')[\min_i Q_{target,i}(s',a)-\alpha\log\pi(a\mid s')],
 $$
+
 $$
 y=r+\gamma(1-d)V_{target}(s'),
 $$
+
 $$
-L_\pi=\mathbb E_s\sum_a\pi(a\mid s)[\alpha\log\pi(a\mid s)-\min_iQ_i(s,a)].
+L_{\pi}=\mathbb{E}_s\sum_a\pi(a\mid s)[\alpha\log\pi(a\mid s)-\min_i Q_i(s,a)].
 $$
 
 `ReplayBuffer` 保存交互数据，预热阶段随机探索，达到采样门槛后每步抽取批次更新。目标网络按 `target ← (1−tau) * target + tau * online` 更新，不直接接受梯度。
