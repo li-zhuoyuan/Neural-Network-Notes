@@ -1,8 +1,10 @@
 # Ignore draft-related files
 draft*
 
-# Ignore testing-related files
-testing*
+# Ignore generated notebook checkpoints and Python caches
+.ipynb_checkpoints/
+__pycache__/
+*.py[cod]
 
 # Ignore data, img, videos folders
 data/

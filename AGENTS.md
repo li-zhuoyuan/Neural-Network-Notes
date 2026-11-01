@@ -2,9 +2,9 @@
 
 ## 项目结构与模块组织
 
-本仓库使用 Jupyter Notebook 开展神经网络学习实验。`VAE.ipynb` 包含变分自编码器及其卷积变体；`Reinforcement Learning.ipynb` 包含 Actor-Critic 和 PPO。`README.md` 提供主题索引，`environment.yml` 记录参考 Conda 环境。目前没有独立的源码包或自动化测试目录。
+本仓库使用 Jupyter Notebook 开展神经网络学习实验。`VAE.ipynb` 包含变分自编码器及其卷积变体；`Reinforcement Learning.ipynb` 包含 AC、PPO、SAC 和 GRPO；`RNN.ipynb` 包含 RNN、GRU、LSTM 及中文词预测实验。同名 Markdown 介绍算法，`test/` 集中保存检查脚本与练习 Notebook。`README.md` 提供主题索引，`environment.yml` 记录参考 Conda 环境。
 
-数据集放在 `data/`，图片放在 `img/`，视频放在 `videos/`。这些目录以及 `draft*`、`testing*` 和 `environment-local.yml` 均被 Git 忽略。编写实验时，不要假设其他贡献者已拥有这些本地文件。
+数据集和模型放在 `data/`，图片放在 `img/`，视频放在 `videos/`。这些目录以及 `draft*`、Jupyter 检查点、Python 缓存和 `environment-local.yml` 均被 Git 忽略。编写实验时，不要假设其他贡献者已拥有这些本地文件。
 
 ## 构建、测试与开发命令
 
@@ -13,6 +13,7 @@
 - `conda env create -f environment.yml`：创建参考环境 `D2L`。
 - `conda activate D2L`：运行 Notebook 前激活环境。
 - `jupyter notebook`：启动 Notebook，进行交互式开发。
+- `python test/test_rnn_structure.py`：快速检查三种循环网络的形状、递推和梯度。
 - `git diff --stat`：提交前检查修改范围。
 
 本项目无需构建。环境配置包含 Windows 专用包及固定版本的 CUDA 版 PyTorch，在其他平台安装时可能需要调整。将本地调整记录在已被忽略的 `environment-local.yml` 中；新增共享依赖时，应同步更新相关说明。
@@ -23,7 +24,7 @@ Python 单元格使用四个空格缩进。函数和变量使用 `snake_case`，
 
 ## 测试指南
 
-目前未配置自动化测试框架或覆盖率要求。修改实验后，应重启内核并按顺序执行相关单元格，检查张量形状、损失值是否有限，以及生成的图表是否合理。初步检查可减少训练轮数，并在提交说明中记录数据集、运行设备和训练设置。检查 Notebook 输出，避免提交无关的输出变化。
+目前未配置统一测试框架或覆盖率要求。检查脚本统一放在 `test/`；运行方法及副作用见 `test/README.md`。完整训练脚本可能更新 Notebook 输出、模型和图表。修改实验后，应检查张量形状、有限损失和结果图，必要时重启内核按顺序执行相关单元格。初步检查可减少训练轮数，并记录数据集、设备与训练设置。提交前避免无关的输出变化。
 
 ## 提交与拉取请求指南
 
