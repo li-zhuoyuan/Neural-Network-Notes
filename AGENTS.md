@@ -27,4 +27,12 @@ Python 单元格使用四个空格缩进。函数和变量使用 `snake_case`，
 
 ## 提交与拉取请求指南
 
+由 Codex 或相关 GPT agent 创建提交时，保留仓库当前配置的用户作为提交作者，并在提交说明末尾空一行后添加以下联合署名：
+
+```text
+Co-authored-by: Codex <codex@openai.com>
+```
+
+此署名用于记录 agent 的参与，不保证 GitHub 会将该邮箱关联到账号或在 Contributors 中展示。除非用户明确要求，不修改已有提交的署名。
+
 现有提交使用简短、以动作为导向的说明，例如 `add README` 和 `add conda env config reference file`。每次提交应聚焦单一主题，并说明具体修改。拉取请求应介绍实验或修复内容、列出受影响的 Notebook，并概述验证结果。有关联问题时附上链接；修改模型行为或可视化时，提供有代表性的结果图。
